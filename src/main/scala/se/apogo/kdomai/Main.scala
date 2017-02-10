@@ -4,10 +4,15 @@ import org.slf4j.{Logger, LoggerFactory}
 import se.apogo.kdomai.client._
 
 object Main extends App {
+  val playerNames = Seq("PlayerA", "PlayerB")
+
+  playerNames.map(new PlayerRunner(_)).par.foreach(_.playGames(Nil))
+}
+
+class PlayerRunner(playerName: String) {
 
   /////////////////   CONFIG   //////////////////
   val kdomApiUrl = "http://localhost/" // Replace with actual kdom host
-  val playerName: String = "Kingdumino"
   val maxNumberOfOngoingGames: Int = 5
   // Only join these game ids (if None: join any game)
   val gameIdsToJoin: Option[Set[String]] = None
@@ -17,8 +22,6 @@ object Main extends App {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   val client = new KdomClient(kdomApiUrl)
   val pollTimeMs: Int = 1000
-
-  playGames(Nil)
 
   def playGames(myGames: Seq[MyGame]): Unit = {
     // Report any finished games:
